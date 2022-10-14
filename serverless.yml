@@ -1,0 +1,51 @@
+# serverless.yml
+
+service: discord-pinginator
+
+variablesResolutionMode: 20210326
+
+frameworkVersion: '^3.18.2'
+
+plugins:
+    - serverless-webpack
+    - serverless-prune-plugin
+
+custom:
+    webpack:
+        packager: 'yarn'
+    prune:
+        automatic: true
+        includeLayers: true
+        number: 3
+
+provider:
+    name: aws
+    runtime: nodejs14.x
+    memorySize: 512
+    region: eu-west-1
+    lambdaHashingVersion: 20201221
+    iam:
+        role:
+            statements:
+                - Effect: Allow
+                  Action:
+                      - s3:GetObject
+                      - s3:PutObject
+                  Resource:
+                      Fn::Sub: '*'
+
+functions:
+    pinger:
+        handler: src/index.handler
+        environment: ${file('./env.yml')}
+        events:
+            - schedule:
+                  rate:
+                      - rate(1 day)
+
+resources:
+    Resources:
+        S3Assets:
+            Type: AWS::S3::Bucket
+            Properties:
+                BucketName: ${self:service, 'discord-pinginator'}-${self:provider.stage, 'dev'}
