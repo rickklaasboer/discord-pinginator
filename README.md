@@ -6,6 +6,28 @@ Lamda function for pinging specific users using a discord webhook.
 
 This project uses serverless to deploy to AWS.
 
+## How to use
+
+You should just use serverless to deploy to AWS
+
+```sh
+WEBHOOK_URL="https://discord.com/api/webhooks/123/abc"
+yarn sls deploy
+```
+
+This will automagically create a S3 bucket for you to keep track of users to ping. This lambda expects a file called `pinginator.json` to be present in this bucket before running for the first time. The format should look something like this:
+
+```json
+{
+    "<discord_user_id>": {
+        "username": "<any name>",
+        "avatar_url": "<any direct image link>",
+        "content": "<any message, supports everything that discord does. Also replaces %day% with the current day>.",
+        "day": 1
+    }
+}
+```
+
 # License (MIT)
 
 Copyright 2022 Rick Klaasboer
