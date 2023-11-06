@@ -40,8 +40,10 @@ functions:
         environment: ${file('./env.yml')}
         events:
             - schedule:
+                  method: scheduler
+                  timezone: Europe/Amsterdam
                   rate:
-                      - rate(1 day)
+                      - cron(54 16 * * ? *)
 
 resources:
     Resources:
